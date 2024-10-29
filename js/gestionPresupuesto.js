@@ -21,8 +21,11 @@ function borrarGasto (idDelete) {
 
         let encontrado = gastos.find(gasto => gasto.id == idDelete);
 
-        if (gastos.includes(encontrado)) {
-            delete gastos[idDelete];
+        if (encontrado) {
+
+            let posEncontrado = gastos.indexOf(encontrado);
+            
+                gastos.splice(posEncontrado, 1);
         }
     }
 }
@@ -71,12 +74,12 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     }
 
 
+    this.valor = 0;
+
     if (valor > 0 && isFinite(valor)) {
         this.valor = valor;
     }
-    else {
-        this.valor = 0;
-    }
+
 
     this.descripcion = descripcion;
 
@@ -102,10 +105,10 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
 
         for (let etiqueta of borrarEtiquetas) {
 
-            if (this.etiquetas.indexOf(borrarEtiqueta) != -1) {
+            if (this.etiquetas.indexOf(etiqueta) != -1) {
 
-                let posEtiqueta = this.etiquetas.indexOf(borrarEtiqueta);
-                delete this.etiquetas(posEtiqueta);
+                let posEtiqueta = this.etiquetas.indexOf(etiqueta);
+                        this.etiquetas.splice(posEtiqueta, 1);
             }
         }
 
@@ -124,18 +127,18 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         }
     };
 
-    this.mostrarGastoCompleto = () => {
+    this.mostrarGastoCompleto = function() {
             
-        this.texto = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.\n
-            Fecha: ${new Date(this.fecha).toLocaleString()}\n
-            Etiquetas: \n`;
+        let texto = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.
+Fecha: ${new Date(this.fecha).toLocaleString()}
+Etiquetas:\n`;
 
             for (let etiqueta of this.etiquetas) {
 
-                this.texto += `- ${cadaEtiqueta}\n`;
+                texto += `- ${etiqueta}\n`;
             }
             
-            return this.texto;
+            return texto;
         };
 
 
