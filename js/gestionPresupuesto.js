@@ -1,6 +1,3 @@
-// TODO: Crear las funciones, objetos y variables indicadas en el enunciado
-
-// TODO: Variable global
 
 let presupuesto = 0;
 
@@ -8,29 +5,45 @@ let gastos = [];
 
 let idGasto = 0;
 
-function listarGastos () {
-    return gastos;
+
+let listarGastos = () => gastos;
+
+
+function anyadirGasto (nuevoGasto) {
+    nuevoGasto.id = idGasto;
+    idGasto++;
+    gastos.push(nuevoGasto);
 }
 
-function anyadirGasto () {
+function borrarGasto (idDelete) {
 
-}
+    if (idDelete >= 0 && isFinite(idDelete)) {
 
-function borrarGasto () {
+        let encontrado = gastos.find(gasto => gasto.id == idDelete);
 
+        if (gastos.includes(encontrado)) {
+            delete gastos[idDelete];
+        }
+    }
 }
 
 function calcularTotalGastos () {
 
+    let suma = 0;
+
+    for (let precio of gastos) {
+            suma += precio.valor;
+    }
+
+    return suma;
 }
 
-function calcularBalance () {
+let calcularBalance = () => presupuesto - calcularTotalGastos();
 
-}
 
 function actualizarPresupuesto(cifra) {
     if (cifra > 0 && isFinite(cifra)) {
-        presupuesto += cifra;
+        presupuesto = cifra;
         return presupuesto;
     }
     else {
@@ -42,10 +55,21 @@ function actualizarPresupuesto(cifra) {
 function mostrarPresupuesto() {
     return `Tu presupuesto actual es de ${presupuesto} €`;
 }
+
+
+
  
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
 
-    this.descripcion = descripcion;
+    let fechaPrueba = Date.parse(fecha);
+
+    if (fechaPrueba) {
+        this.fecha = fechaPrueba;
+    }
+    else {
+        this.fecha = Date.parse(new Date());
+    }
+
 
     if (valor > 0 && isFinite(valor)) {
         this.valor = valor;
@@ -54,7 +78,42 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         this.valor = 0;
     }
 
-    this.mostrarGasto = () => `Gasto correspondiente a ${this.descripcion} con valor ${this.valor}`;
+    this.descripcion = descripcion;
+
+
+    this.etiquetas = [];
+
+    this.anyadirEtiquetas = function(...arrayEtiquetas) {
+
+        for (let etiqueta of arrayEtiquetas) {
+            if (this.etiquetas.indexOf(etiqueta) == -1) {
+
+                this.etiquetas.push(etiqueta);
+        }
+        }
+    }
+
+    this.anyadirEtiquetas(...etiquetas);
+
+
+
+    this.borrarEtiquetas = function(...borrarEtiquetas) {
+
+
+        for (let etiqueta of borrarEtiquetas) {
+
+            if (this.etiquetas.indexOf(borrarEtiqueta) != -1) {
+
+                let posEtiqueta = this.etiquetas.indexOf(borrarEtiqueta);
+                delete this.etiquetas(posEtiqueta);
+            }
+        }
+
+    }
+
+
+
+    this.mostrarGasto = () => `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
 
     this.actualizarDescripcion = (nuevaDescripcion) => this.descripcion = nuevaDescripcion;
 
@@ -63,9 +122,37 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         if (nuevoValor > 0 && isFinite(nuevoValor)) {
             this.valor = nuevoValor;
         }
-    }
+    };
 
-}
+    this.mostrarGastoCompleto = () => {
+            
+        this.texto = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.\n
+            Fecha: ${new Date(this.fecha).toLocaleString()}\n
+            Etiquetas: \n`;
+
+            for (let etiqueta of this.etiquetas) {
+
+                this.texto += `- ${cadaEtiqueta}\n`;
+            }
+            
+            return this.texto;
+        };
+
+
+
+        this.actualizarFecha = (fecha) => {
+            let modificarFecha = Date.parse(fecha);
+    
+            if (modificarFecha) {
+    
+                this.fecha = modificarFecha;
+            }
+        }
+    
+       
+    }        
+
+    
 
 
 
