@@ -60,6 +60,94 @@ function mostrarPresupuesto() {
 }
 
 
+function filtrarGastos (objeto) {
+
+
+  return gastos.filter(function(gasto) {
+
+    let resultado = true;
+
+    if (objeto.fechaDesde) {
+        let fecha = Date.parse(objeto.fechaDesde);
+
+        if (gasto.fecha < fecha) {
+            resultado = false;
+        }
+    }
+    if (objeto.fechaHasta) {
+        let fecha = Date.parse(objeto.fechaHasta);
+        if (gasto.fecha > fecha) {
+            resultado = false;
+        }
+    }
+    if (objeto.valorMinimo) {
+        if (gasto.valor < objeto.valorMinimo) {
+            resultado = false;
+        }
+    }
+    if (objeto.valorMaximo) {
+        if (gasto.valor > objeto.valorMaximo) {
+            resultado = false;
+        }
+    }
+    if (objeto.descripcionContiene) {
+        if (gasto.descripcion.indexOf(objeto.descripcionContiene) < 0) {
+            resultado = false;
+        }
+    }
+
+
+    if (objeto.etiquetasTiene) {
+
+        let etiquetaEncontrada = false;
+
+        for (let etiqueta of objeto.etiquetasTiene) {
+            if (gasto.etiquetas.indexOf(etiqueta) > -1) {
+                
+                etiquetaEncontrada = true;
+            }
+        }
+        resultado = resultado && etiquetaEncontrada;
+    }
+
+    return resultado;
+
+  })
+}
+
+
+function agruparGastos (periodo, etiquetas, fechaDesde, fechaHasta) {
+
+    let gastosFiltrados = filtrarGastos({
+        
+        etiquetasTiene: etiquetas,
+        fechaDesde: fechaDesde,
+        fechaHasta: fechaHasta
+
+    });
+
+
+    return gastosFiltrados.reduce(function(acc, gasto) {
+
+            let periodoAgrup = gasto.obtenerPeriodoAgrupacion(periodo);
+
+            if (acc[periodoAgrup]) {
+
+                acc[periodoAgrup] += gasto.valor;
+            }
+            else {
+                
+                acc[periodoAgrup] = gasto.valor;
+            }
+
+            return acc;
+
+    }, {});
+
+
+}
+
+
 
  
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
@@ -111,9 +199,33 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
                         this.etiquetas.splice(posEtiqueta, 1);
             }
         }
-
     }
 
+        
+    this.obtenerPeriodoAgrupacion = function (periodo) {
+
+        let agruparFecha = new Date(this.fecha).toISOString();
+    
+        let fechaDevuelta;
+    
+        if (periodo == "dia") {
+            fechaDevuelta = agruparFecha.substring(0, 10);
+            return fechaDevuelta;
+        }
+    
+        if (periodo == "mes") {
+            fechaDevuelta = agruparFecha.substring(0, 7);
+            return fechaDevuelta;
+        }
+    
+        if (periodo == "anyo") {
+            fechaDevuelta = agruparFecha.substring(0, 4);
+            return fechaDevuelta;
+        }
+    
+        return fechaDevuelta = agruparFecha.substring(0, 7);
+    
+    }
 
 
     this.mostrarGasto = () => `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
@@ -151,8 +263,8 @@ Etiquetas:\n`;
                 this.fecha = modificarFecha;
             }
         }
-    
-       
+
+
     }        
 
     
@@ -170,5 +282,7 @@ export   {
     anyadirGasto,
     borrarGasto,
     calcularTotalGastos,
-    calcularBalance
+    calcularBalance,
+    filtrarGastos,
+    agruparGastos
 }
