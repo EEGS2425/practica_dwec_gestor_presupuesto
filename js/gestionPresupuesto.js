@@ -152,24 +152,23 @@ function agruparGastos (periodo, etiquetas, fechaDesde, fechaHasta) {
  
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
 
-    let fecha = Date.parse(fecha);
+    
+    this.fecha = Date.parse(new Date());
 
-    if (fechaPrueba) {
-        this.fecha = fechaPrueba;
-    }
-    else {
-        this.fecha = Date.parse(new Date());
+    if (fecha) {
+        this.fecha = Date.parse(fecha);
     }
 
 
+    this.descripcion = descripcion;
+
+    
     this.valor = 0;
 
     if (valor > 0 && isFinite(valor)) {
         this.valor = valor;
     }
 
-
-    this.descripcion = descripcion;
 
 
     this.etiquetas = [];
