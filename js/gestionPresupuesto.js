@@ -37,7 +37,7 @@ function calcularTotalGastos () {
     for (let precio of gastos) {
             suma += precio.valor;
     }
-
+    
     return suma;
 }
 
@@ -126,7 +126,7 @@ function agruparGastos (periodo, etiquetas, fechaDesde, fechaHasta) {
 
     });
 
-
+    
     return gastosFiltrados.reduce(function(acc, gasto) {
 
             let periodoAgrup = gasto.obtenerPeriodoAgrupacion(periodo);
@@ -152,13 +152,19 @@ function agruparGastos (periodo, etiquetas, fechaDesde, fechaHasta) {
  
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
 
-    
-    this.fecha = Date.parse(new Date());
 
-    if (fecha) {
-        this.fecha = Date.parse(fecha);
+    let hayFecha = Date.parse(fecha);
+
+    if (hayFecha) {
+
+        this.fecha = hayFecha;
+
+    } else {
+
+        this.fecha = Date.parse(new Date());
     }
 
+    
 
     this.descripcion = descripcion;
 

@@ -14,25 +14,25 @@ function mostrarGastoWeb (idElemento, gasto) {
 
 
     let divGasto = document.createElement("div");
-    divGasto.classList("gasto");
+    divGasto.className = "gasto";
 
 
     let divGastoDescripcion = document.createElement("div");
-    divGastoDescripcion.classList("gasto-descripcion");
+    divGastoDescripcion.className = "gasto-descripcion";
     let parrafoGastoDescripcion = document.createElement("p");
     parrafoGastoDescripcion.textContent = gasto.descripcion;
     divGastoDescripcion.append(parrafoGastoDescripcion);
 
 
     let divGastoFecha = document.createElement("div");
-    divGastoFecha.classList("gasto-fecha");
+    divGastoFecha.className = "gasto-fecha";
     let parrafoGastoFecha = document.createElement("p");
     parrafoGastoFecha.textContent = gasto.fecha;
     divGastoFecha.append(parrafoGastoFecha);
 
 
     let divGastoValor = document.createElement("div");
-    divGastoValor.classList("gasto-valor");
+    divGastoValor.className = "gasto-valor";
     let parrafoGastoValor = document.createElement("p");
     parrafoGastoValor.textContent = gasto.valor;
     divGastoValor.append(parrafoGastoValor);
@@ -44,13 +44,13 @@ function mostrarGastoWeb (idElemento, gasto) {
 
 
     let divGastoEtiquetas = document.createElement("div");
-    divGastoEtiquetas.classList("gasto-etiquetas");
+    divGastoEtiquetas.className = "gasto-etiquetas";
 
     
    for (let etiqueta of gasto.etiquetas) {
 
     let spanGastoEtiquetas = document.createElement("span");
-    spanGastoEtiquetas.classList("gasto-etiquetas-etiqueta");
+    spanGastoEtiquetas.className = "gasto-etiquetas-etiqueta";
     
     spanGastoEtiquetas.textContent = etiqueta;
 
@@ -72,35 +72,37 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
 
     let divAgrupacion = document.createElement("div");
-    divAgrupacion.classList("agrupacion");
+    divAgrupacion.className = "agrupacion";
     let h1GastosAgrupados = document.createElement("h1");
     h1GastosAgrupados.textContent = `Gastos agrupados por ${periodo}`;
     divAgrupacion.append(h1GastosAgrupados);
 
 
-    Object.entries(agrup).forEach(([clave, valor]) => {
+    for (let [clave, valor] of Object.entries(agrup)) {
+
 
         let agrupacionDato = document.createElement("div");
-        agrupacionDato.classList("agrupacion-dato");
+        agrupacionDato.className = "agrupacion-dato";
 
         let agrupacionDatoClave = document.createElement("span");
-        agrupacionDatoClave.classList("agrupacion-dato-clave");
+        agrupacionDatoClave.className = "agrupacion-dato-clave";
         agrupacionDatoClave.textContent = clave;
         agrupacionDato.append(agrupacionDatoClave);
 
 
         let agrupacionDatoValor = document.createElement("span");
-        agrupacionDatoValor.classList("agrupacion-dato-valor");
+        agrupacionDatoValor.className = "agrupacion-dato-valor";
         agrupacionDatoValor.textContent = valor;
         agrupacionDato.append(agrupacionDatoValor);
 
         divAgrupacion.append(agrupacionDato);
 
-    });
+    }
 
     elemento.append(divAgrupacion);
 
-}
+    }
+
 
 
 export {
