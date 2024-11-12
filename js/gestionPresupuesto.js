@@ -164,7 +164,9 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         this.fecha = Date.parse(new Date());
     }
 
-    
+    this.id = idGasto;
+
+    idGasto++;
 
     this.descripcion = descripcion;
 
