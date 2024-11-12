@@ -243,13 +243,11 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
     }
 
 
-
     function BorrarHandle () {
 
         this.handleEvent = function () {
 
             gestionPresupuesto.borrarGasto(this.gasto.id);
-
             repintar();
         }
 
