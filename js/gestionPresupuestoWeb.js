@@ -81,6 +81,11 @@ function mostrarGastoWeb (idElemento, gasto) {
     divGasto.append(btnEditar);
 
 
+    let nuevoEditarHandleFormulario = new EditarHandleFormulario();
+
+
+
+
     let btnBorrar = document.createElement("button");
     btnBorrar.setAttribute("type", "borrar");
     btnBorrar.className = "gasto-borrar";
@@ -92,6 +97,8 @@ function mostrarGastoWeb (idElemento, gasto) {
     btnBorrar.addEventListener("click", nuevoBorrarHandle);
 
     divGasto.append(btnBorrar);
+
+
 
     elemento.append(divGasto);
 
@@ -263,6 +270,131 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
             repintar();
          }
     } 
+
+
+    function EditarHandleFormulario () {
+
+        this.handleEvent = function (evento) {
+
+            document.getElementById("anyadirgasto-formulario").disabled = true;
+
+            let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
+    
+            var formulario = plantillaFormulario.querySelector("form");
+      
+            formulario.elements.descripcion.textContent = this.gasto.descripcion;
+
+            formulario.elements.valor.textContent = this.gasto.valor.toString();
+
+            formulario.elements.fecha.textContent = this.gasto.fecha.toISOString();
+
+            for (let etiqueta of etiquetas) {
+
+                formulario.elements.etiquetas.textContent = etiqueta + ", ";
+            }
+            
+                
+            let eventoSubmit = new EventoSubmit();
+
+            eventoSubmit.gasto = this.gasto;
+    
+            formulario.addEventListener("submit", eventoSubmit);
+    
+    
+            let botonCancelar = formulario.elements.getElementByClassName("cancelar");
+    
+            let eventoCancelar = new EventoCancelar();
+    
+            eventoCancelar.formulario = formulario;
+    
+            eventoCancelar.activarBoton = evento.currentTarget;
+    
+            botonCancelar.addEventListener("click", eventoCancelar);
+    
+    
+            let divControlesPrincipales = document.getElementById("controlesprincipales");
+    
+    
+            divControlesPrincipales.append(plantillaFormulario);    
+            
+        }
+    }
+
+            
+     function EventoSubmit () {
+        
+        this.handleEvent = function (evento) {
+
+            evento.preventDefault();
+
+            let descripcion = evento.currentTarget.elements.descripcion.textContent;
+    
+            let valor = Number(evento.currentTarget.elements.valor.textContent);
+    
+            let fecha = evento.currentTarget.elements.fecha.textContent;
+    
+            let etiquetas = evento.currentTarget.elements.etiquetas.textContent;
+    
+            let arrayEtiquetas  = etiquetas.split(",");
+    
+            let nuevoGasto = new gestionPresupuesto.CrearGasto(descripcion, valor, fecha, ...arrayEtiquetas);
+    
+            gestionPresupuesto.anyadirGasto(nuevoGasto);
+    
+            repintar();
+    
+            document.getElementById("anyadirgasto-formulario").disabled = false;
+        }
+    
+}
+
+    
+    function EventoCancelar () {
+
+        this.handleEvent = function () {
+
+            this.formulario.remove();
+            this.activarBoton.disabled = false;
+
+        }
+
+    }
+
+
+    function nuevoGastoWebFormulario (evento) {
+
+        document.getElementById("anyadirgasto-formulario").disabled = true;
+
+        let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
+
+        var formulario = plantillaFormulario.querySelector("form");
+  
+
+        let eventoSubmit = new EventoSubmit();
+
+        formulario.addEventListener("submit", eventoSubmit);
+
+
+        let botonCancelar = formulario.elements.getElementByClassName("cancelar");
+
+        let eventoCancelar = new EventoCancelar();
+
+        eventoCancelar.formulario = formulario;
+
+        eventoCancelar.activarBoton = evento.currentTarget;
+
+        botonCancelar.addEventListener("click", eventoCancelar);
+
+
+        let divControlesPrincipales = document.getElementById("controlesprincipales");
+
+
+        divControlesPrincipales.append(plantillaFormulario);    
+        
+    }
+
+
+    
 
 
 export {
