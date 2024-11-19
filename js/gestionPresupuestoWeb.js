@@ -81,11 +81,6 @@ function mostrarGastoWeb (idElemento, gasto) {
     divGasto.append(btnEditar);
 
 
-    let nuevoEditarHandleFormulario = new EditarHandleFormulario();
-
-
-
-
     let btnBorrar = document.createElement("button");
     btnBorrar.setAttribute("type", "borrar");
     btnBorrar.className = "gasto-borrar";
@@ -99,6 +94,19 @@ function mostrarGastoWeb (idElemento, gasto) {
     divGasto.append(btnBorrar);
 
 
+    let btnEditarFormulario = document.createElement("button");
+    btnEditarFormulario.setAttribute("type", "button");
+    btnEditarFormulario.className = "gasto-editar-formulario";
+    btnEditarFormulario.textContent = "Editar (formulario)";
+
+
+    let nuevoEditarFormulario = new EditarHandleFormulario();
+
+    nuevoEditarFormulario.gasto = gasto;
+
+    btnEditarFormulario.addEventListener("click", nuevoEditarFormulario);
+
+    divGasto.append(btnEditarFormulario);
 
     elemento.append(divGasto);
 
@@ -276,32 +284,36 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
         this.handleEvent = function (evento) {
 
-            document.getElementById("anyadirgasto-formulario").disabled = true;
+            evento.currentTarget.disabled = true;
 
             let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
     
             var formulario = plantillaFormulario.querySelector("form");
+
       
-            formulario.elements.descripcion.textContent = this.gasto.descripcion;
+            formulario.elements.descripcion.value = this.gasto.descripcion;
 
-            formulario.elements.valor.textContent = this.gasto.valor.toString();
+            formulario.elements.valor.value = this.gasto.valor.toString();
 
-            formulario.elements.fecha.textContent = this.gasto.fecha.toISOString();
+            formulario.elements.fecha.value = this.gasto.fecha;
 
-            for (let etiqueta of etiquetas) {
+            for (let etiqueta of this.gasto.etiquetas) {
 
-                formulario.elements.etiquetas.textContent = etiqueta + ", ";
+                formulario.elements.etiquetas.value = etiqueta + ", ";
             }
             
                 
-            let eventoSubmit = new EventoSubmit();
+            let eventoSubmit1 = new EventoSubmit();
 
-            eventoSubmit.gasto = this.gasto;
+            eventoSubmit1.gasto = this.gasto;
     
-            formulario.addEventListener("submit", eventoSubmit);
+            formulario.addEventListener("submit", function (evento) {
+
+                eventoSubmit1(evento);
+            });
     
     
-            let botonCancelar = formulario.elements.getElementByClassName("cancelar");
+            let botonCancelar = formulario.querySelector("button.cancelar");
     
             let eventoCancelar = new EventoCancelar();
     
@@ -310,15 +322,46 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
             eventoCancelar.activarBoton = evento.currentTarget;
     
             botonCancelar.addEventListener("click", eventoCancelar);
-    
-    
-            let divControlesPrincipales = document.getElementById("controlesprincipales");
-    
-    
-            divControlesPrincipales.append(plantillaFormulario);    
+
             
+            let divControlesPrincipales = document.getElementById("controlesprincipales");
+
+
+            divControlesPrincipales.append(plantillaFormulario);  
         }
     }
+
+
+    function EventoSubmit () {
+        
+        this.handleEvent = function (event) {
+        
+        event.preventDefault();
+
+        let descripcion = event.currentTarget.elements.descripcion.value;
+    
+        let valor = Number(event.currentTarget.elements.valor.value);
+
+        let fecha = event.currentTarget.elements.fecha.value;
+
+        let etiquetas = event.currentTarget.elements.etiquetas.value;
+
+        let arrayEtiquetas  = etiquetas.split(",");
+
+        
+        this.gasto.actualizarDescripcion(descripcion);
+
+        this.gasto.actualizarValor(valor);
+
+        this.gasto.actualizarFecha(fecha);
+
+        this.gasto.anyadirEtiquetas(...arrayEtiquetas);
+
+        repintar();
+
+        }     
+
+}
 
             
      function eventoSubmit (evento) {
