@@ -288,65 +288,65 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
             let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
     
-            var formulario = plantillaFormulario.querySelector("form");
+            var formularioEditar = plantillaFormulario.querySelector("form");
 
       
-            formulario.elements.descripcion.value = this.gasto.descripcion;
+            formularioEditar.elements.descripcion.value = this.gasto.descripcion;
 
-            formulario.elements.valor.value = this.gasto.valor.toString();
+            formularioEditar.elements.valor.value = this.gasto.valor.toString();
 
-            formulario.elements.fecha.value = this.gasto.fecha;
+            formularioEditar.elements.fecha.value = this.gasto.fecha;
+
 
             for (let etiqueta of this.gasto.etiquetas) {
 
-                formulario.elements.etiquetas.value = etiqueta + ", ";
+                    formularioEditar.elements.etiquetas.value += etiqueta + ", ";
+
             }
             
-                
-            let eventoSubmit1 = new EventoSubmit();
 
-            eventoSubmit1.gasto = this.gasto;
-    
-            formulario.addEventListener("submit", function (evento) {
+            let eventoSubmit = new EventoSubmit();
 
-                eventoSubmit1(evento);
-            });
+            eventoSubmit.gasto = this.gasto;
     
     
-            let botonCancelar = formulario.querySelector("button.cancelar");
+            let botonCancelar = formularioEditar.querySelector("button.cancelar");
     
             let eventoCancelar = new EventoCancelar();
     
-            eventoCancelar.formulario = formulario;
+            eventoCancelar.formulario = formularioEditar;
     
             eventoCancelar.activarBoton = evento.currentTarget;
+
+                
+            formularioEditar.addEventListener("submit", eventoSubmit);
     
             botonCancelar.addEventListener("click", eventoCancelar);
 
             
-            let divControlesPrincipales = document.getElementById("controlesprincipales");
+            let divFormulario = evento.target;
 
-
-            divControlesPrincipales.append(plantillaFormulario);  
+            divFormulario.after(plantillaFormulario);  
         }
     }
 
 
     function EventoSubmit () {
-        
-        this.handleEvent = function (event) {
-        
-        event.preventDefault();
 
-        let descripcion = event.currentTarget.elements.descripcion.value;
+        
+        this.handleEvent = function (evento) {
+        
+        evento.preventDefault();
+
+        let descripcion = evento.currentTarget.elements.descripcion.value;
     
-        let valor = Number(event.currentTarget.elements.valor.value);
+        let valor = Number(evento.currentTarget.elements.valor.value);
 
-        let fecha = event.currentTarget.elements.fecha.value;
+        let fecha = evento.currentTarget.elements.fecha.value;
 
-        let etiquetas = event.currentTarget.elements.etiquetas.value;
+        let etiquetas = evento.currentTarget.elements.etiquetas.value;
 
-        let arrayEtiquetas  = etiquetas.split(",");
+        let arrayEtiquetas = etiquetas.split(",");
 
         
         this.gasto.actualizarDescripcion(descripcion);
@@ -355,8 +355,10 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
         this.gasto.actualizarFecha(fecha);
 
-        this.gasto.anyadirEtiquetas(...arrayEtiquetas);
+        this.gasto.borrarEtiquetas(...this.gasto.etiquetas);
 
+        this.gasto.anyadirEtiquetas(...arrayEtiquetas);
+       
         repintar();
 
         }     
@@ -413,10 +415,7 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
         
 
-        formulario.addEventListener("submit", function (evento) {
-
-            eventoSubmit(evento);
-        });
+        formulario.addEventListener("submit", eventoSubmit);
 
 
         let botonCancelar = formulario.querySelector("button.cancelar");
