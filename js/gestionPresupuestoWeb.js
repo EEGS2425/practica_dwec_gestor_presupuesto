@@ -321,19 +321,18 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
     }
 
             
-     function EventoSubmit () {
+     function eventoSubmit (evento) {
         
-        this.handleEvent = function (evento) {
 
             evento.preventDefault();
 
-            let descripcion = evento.currentTarget.elements.descripcion.textContent;
+            let descripcion = evento.currentTarget.elements.descripcion.value;
     
-            let valor = Number(evento.currentTarget.elements.valor.textContent);
+            let valor = Number(evento.currentTarget.elements.valor.value);
     
-            let fecha = evento.currentTarget.elements.fecha.textContent;
+            let fecha = evento.currentTarget.elements.fecha.value;
     
-            let etiquetas = evento.currentTarget.elements.etiquetas.textContent;
+            let etiquetas = evento.currentTarget.elements.etiquetas.value;
     
             let arrayEtiquetas  = etiquetas.split(",");
     
@@ -343,8 +342,7 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
     
             repintar();
     
-            document.getElementById("anyadirgasto-formulario").disabled = false;
-        }
+            document.getElementById("anyadirgasto-formulario").disabled = false;        
     
 }
 
@@ -363,19 +361,22 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
     function nuevoGastoWebFormulario (evento) {
 
-        document.getElementById("anyadirgasto-formulario").disabled = true;
 
         let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
 
         var formulario = plantillaFormulario.querySelector("form");
   
+        document.getElementById("anyadirgasto-formulario").disabled = true;
 
-        let eventoSubmit = new EventoSubmit();
+        
 
-        formulario.addEventListener("submit", eventoSubmit);
+        formulario.addEventListener("submit", function (evento) {
+
+            eventoSubmit(evento);
+        });
 
 
-        let botonCancelar = formulario.elements.getElementByClassName("cancelar");
+        let botonCancelar = formulario.querySelector("button.cancelar");
 
         let eventoCancelar = new EventoCancelar();
 
@@ -394,7 +395,9 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
     }
 
 
-    
+    let botonAnyadirGastoFormulario = document.getElementById("anyadirgasto-formulario");
+
+    botonAnyadirGastoFormulario.addEventListener("click", nuevoGastoWebFormulario);
 
 
 export {
