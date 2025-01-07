@@ -148,6 +148,12 @@ function agruparGastos (periodo, etiquetas, fechaDesde, fechaHasta) {
 }
 
 
+function transformarListadoEtiquetas(texto) {
+
+    return texto.match(/[a-zA-Z0-9]+/gi);
+}
+
+
 
  
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
@@ -288,5 +294,6 @@ export   {
     calcularTotalGastos,
     calcularBalance,
     filtrarGastos,
-    agruparGastos
+    agruparGastos,
+    transformarListadoEtiquetas
 }

@@ -28,7 +28,7 @@ function mostrarGastoWeb (idElemento, gasto) {
     let divGastoFecha = document.createElement("div");
     divGastoFecha.className = "gasto-fecha";
     let parrafoGastoFecha = document.createElement("p");
-    parrafoGastoFecha.textContent = gasto.fecha;
+    parrafoGastoFecha.textContent = new Date(gasto.fecha).toLocaleDateString();
     divGastoFecha.append(parrafoGastoFecha);
 
 
@@ -440,6 +440,48 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
     let botonAnyadirGastoFormulario = document.getElementById("anyadirgasto-formulario");
 
     botonAnyadirGastoFormulario.addEventListener("click", nuevoGastoWebFormulario);
+
+
+
+    function filtrarGastosWeb (evento) {
+
+        evento.preventDefault();
+
+        let etiquetas = evento.target.elements.formulario-filtrado-etiquetas-tiene.value;
+
+        let etiquetasValidas = [];
+
+        if (etiquetas != "") {
+
+            etiquetasValidas = gestionPresupuesto.transformarListadoEtiquetas(etiquetas);
+        }
+
+
+        let objeto = {
+
+            descripcionContiene: evento.target.elements.formulario-filtrado-descripcion.value,
+            fechaDesde: evento.target.elements.formulario-filtrado-fecha-desde.value,
+            fechaHasta: evento.target.elements.formulario-filtrado-fecha-hasta.value,
+            valorMinimo: evento.target.elements.formulario-filtrado-valor-minimo.value,
+            valorMaximo: evento.target.elements.formulario-filtrado-valor-maximo.value,
+            etiquetasTiene: etiquetasValidas
+        };
+
+
+        let filtradoPorEtiquetas = gestionPresupuesto.filtrarGastos(objeto);
+
+        for (let gasto of filtradoPorEtiquetas) {
+        
+            gestionPresupuestoWeb.mostrarGastoWeb("listado-gastos-completo", gasto);
+        }
+        
+    }
+
+
+    let formulario = document.getElementById("formulario-filtrado");
+
+    formulario.addEventListener("submit", filtrarGastosWeb);
+
 
 
 export {
