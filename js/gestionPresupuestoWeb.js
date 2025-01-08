@@ -447,33 +447,58 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
         evento.preventDefault();
 
-        let etiquetas = evento.target.elements.formulario-filtrado-etiquetas-tiene.value;
+        let descripcion =  document.getElementById("formulario-filtrado-descripcion").value;
+        let fechaDesde =  document.getElementById("formulario-filtrado-fecha-desde").value;
+        let fechaHasta = document.getElementById("formulario-filtrado-fecha-hasta").value;
+        let valorMinimo = document.getElementById("formulario-filtrado-valor-minimo").value;
+        let valorMaximo = document.getElementById("formulario-filtrado-valor-maximo").value;
+        let etiquetas = document.getElementById("formulario-filtrado-etiquetas-tiene").value;
 
-        let etiquetasValidas = [];
+        let divListadoGastosCompleto = document.getElementById("listado-gastos-completo");
+        divListadoGastosCompleto.innerHTML = "";
+        let divListadoGastosFiltrado1 = document.getElementById("listado-gastos-filtrado-1");
+        divListadoGastosFiltrado1.innerHTML = "";
+        let divListadoGastosFiltrado2 = document.getElementById("listado-gastos-filtrado-2");
+        divListadoGastosFiltrado2.innerHTML = "";
+        let divListadoGastosFiltrado3 = document.getElementById("listado-gastos-filtrado-3");
+        divListadoGastosFiltrado3.innerHTML = "";
+        let divListadoGastosFiltrado4 = document.getElementById("listado-gastos-filtrado-4");
+        divListadoGastosFiltrado4.innerHTML = "";
+        let divListadoGastosAgrupacionDia = document.getElementById("agrupacion-dia");
+        divListadoGastosAgrupacionDia.innerHTML = "";
+        let divListadoGastosAgrupacionMes = document.getElementById("agrupacion-mes");
+        divListadoGastosAgrupacionMes.innerHTML = "";
+        let divListadoGastosAgrupacionAnyo = document.getElementById("agrupacion-anyo");
+        divListadoGastosAgrupacionAnyo.innerHTML = "";   
 
-        if (etiquetas != "") {
+        
+        if (descripcion == "" && fechaDesde == "" && fechaHasta == "" && valorMinimo == "" && valorMaximo == "" && etiquetas == "") {
 
-            etiquetasValidas = gestionPresupuesto.transformarListadoEtiquetas(etiquetas);
+            repintar();
         }
 
+        else {
+                 
 
         let objeto = {
 
-            descripcionContiene: evento.target.elements.formulario-filtrado-descripcion.value,
-            fechaDesde: evento.target.elements.formulario-filtrado-fecha-desde.value,
-            fechaHasta: evento.target.elements.formulario-filtrado-fecha-hasta.value,
-            valorMinimo: evento.target.elements.formulario-filtrado-valor-minimo.value,
-            valorMaximo: evento.target.elements.formulario-filtrado-valor-maximo.value,
-            etiquetasTiene: etiquetasValidas
+            descripcionContiene: descripcion,
+            fechaDesde: fechaDesde,
+            fechaHasta: fechaHasta,
+            valorMinimo: valorMinimo,
+            valorMaximo: valorMaximo,
+            etiquetasTiene: gestionPresupuesto.transformarListadoEtiquetas(etiquetas)
         };
 
 
-        let filtradoPorEtiquetas = gestionPresupuesto.filtrarGastos(objeto);
+        let filtrado = gestionPresupuesto.filtrarGastos(objeto);      
 
-        for (let gasto of filtradoPorEtiquetas) {
+        for (let gasto of filtrado) {
         
-            gestionPresupuestoWeb.mostrarGastoWeb("listado-gastos-completo", gasto);
+            mostrarGastoWeb("listado-gastos-completo", gasto);
         }
+
+        }   
         
     }
 

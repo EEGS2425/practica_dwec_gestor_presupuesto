@@ -62,7 +62,6 @@ function mostrarPresupuesto() {
 
 function filtrarGastos (objeto) {
 
-
   return gastos.filter(function(gasto) {
 
     let resultado = true;
@@ -81,6 +80,7 @@ function filtrarGastos (objeto) {
         }
     }
     if (objeto.valorMinimo) {
+
         if (gasto.valor < objeto.valorMinimo) {
             resultado = false;
         }
