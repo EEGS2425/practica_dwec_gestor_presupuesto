@@ -93,6 +93,18 @@ function mostrarGastoWeb (idElemento, gasto) {
 
     divGasto.append(btnBorrar);
 
+    let btnBorrarApi = document.createElement("button");
+    btnBorrarApi.className = "gasto-borrar-api";
+    btnBorrarApi.setAttribute("type", "button");
+    btnBorrarApi.innerHTML = "Borrar (API)";
+
+    let gastoBorrarApi = new BorrarGastoApi();
+    gastoBorrarApi.gasto = gasto;
+
+    btnBorrarApi.addEventListener("click", gastoBorrarApi);
+
+    divGasto.append(btnBorrarApi);
+
 
     let btnEditarFormulario = document.createElement("button");
     btnEditarFormulario.setAttribute("type", "button");
@@ -111,6 +123,37 @@ function mostrarGastoWeb (idElemento, gasto) {
     elemento.append(divGasto);
 
 
+}
+
+
+function BorrarGastoApi () {
+
+    this.handleEvent = async function () {
+
+        let nombreUsuario = document.getElementById("nombre_usuario").value;
+
+
+        try {
+        
+        let respuesta = await fetch (`https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${nombreUsuario}/${this.gasto.gastoId}`, 
+         
+        {
+            method: "DELETE"
+        });        
+
+        if (respuesta.ok) {
+
+            cargarGastosApi();
+        }
+        else {
+            throw new Error ("Fallo al borrar el gasto");
+        }
+    } catch (error) {
+
+        alert("Error: " + error.message);
+    }
+
+    }
 }
 
 
@@ -286,7 +329,7 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
             evento.currentTarget.disabled = true;
 
-            let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
+            var plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
 
             var formularioEditar = plantillaFormulario.querySelector("form");
 
@@ -324,11 +367,87 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
             botonCancelar.addEventListener("click", eventoCancelar);
 
 
+            let btnGastoEnviarApi = formularioEditar.querySelector("button.gasto-enviar-api");
+
+            let gastoEnviarApiPut = new GastoEnviarApiPut ();
+
+            gastoEnviarApiPut.gasto = this.gasto;
+
+
+            btnGastoEnviarApi.addEventListener("click", gastoEnviarApiPut);
+
+
+
             let divFormulario = evento.target;
 
             divFormulario.after(plantillaFormulario);
         }
     }
+
+
+    function GastoEnviarApiPut () {
+
+
+        this.handleEvent = async function (evento) {
+
+            try {
+                
+            let nombreUsuario = document.getElementById("nombre_usuario").value;
+
+            let boton = evento.currentTarget;
+
+            let formularioEditar = boton.closest("form");
+            
+
+            let descripcion = formularioEditar.elements.descripcion.value;
+
+            let valor = Number(formularioEditar.elements.valor.value);
+
+            let fecha = formularioEditar.elements.fecha.value;
+
+            let etiquetas = formularioEditar.elements.etiquetas.value;
+
+            let etiquetasArray = gestionPresupuesto.transformarListadoEtiquetas(etiquetas);
+
+            let nuevoGasto = new gestionPresupuesto.CrearGasto(descripcion, valor, fecha, ...etiquetasArray);
+
+               
+            if (nombreUsuario != ""){
+    
+                let respuesta = await fetch (`https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${nombreUsuario}/${this.gasto.gastoId}`, {
+    
+                    method: "PUT",
+    
+                    headers: {
+                        "Content-Type" : "application/json;charset=utf-8"
+                    },
+    
+                    body: JSON.stringify(nuevoGasto)
+                });
+    
+                if (respuesta.ok) {
+    
+                    cargarGastosApi();
+                }
+                else {
+                    throw new Error ("Se ha producido un fallo de conexión");
+                }
+    
+            }
+            else {
+                throw new Error ("Necesita rellenar el campo vacio con su nombre y apellido sin espacios");
+            }
+        } catch (error) {
+    
+            alert("Error: " + error.message);
+        }
+    
+        }
+
+        }
+
+    
+
 
 
     function EventoSubmit () {
@@ -427,6 +546,65 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
         eventoCancelar.activarBoton = evento.currentTarget;
 
         botonCancelar.addEventListener("click", eventoCancelar);
+
+
+
+        let btnGastoEnviarApi = formulario.querySelector("button.gasto-enviar-api");
+
+
+        btnGastoEnviarApi.addEventListener("click", async function () {
+
+            try {
+
+            
+            let descripcion = formulario.elements.descripcion.value;
+            let valor = Number(formulario.elements.valor.value);
+            let fecha = formulario.elements.fecha.value;
+            let etiquetas = formulario.elements.etiquetas.value;
+
+            let etiquetasArray = gestionPresupuesto.transformarListadoEtiquetas(etiquetas);
+
+            let nuevoGasto = new gestionPresupuesto.CrearGasto(descripcion, valor, fecha, ...etiquetasArray);
+
+
+            let nombreUsuario = document.getElementById("nombre_usuario").value;
+
+
+            if (nombreUsuario != "") {
+                
+                let respuesta = await fetch (`https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${nombreUsuario}`, {
+
+                    method: "POST",
+    
+                    headers: {
+                        "Content-Type" : "application/json;charset=utf-8"
+                    },
+    
+                    body: JSON.stringify(nuevoGasto)
+                });
+    
+                if (respuesta.ok) {
+    
+                    cargarGastosApi();
+        
+                }
+                else {
+                    throw new Error ("Fallo de conexión");
+                }
+    
+            }
+
+            else {
+                throw new Error ("Necesita rellenar el campo con su nombre y apellido, sin espacios");
+            }
+
+        } catch (error) {
+
+            alert("Error: " + error.message);
+        }
+
+        
+        });
 
 
         let divControlesPrincipales = document.getElementById("controlesprincipales");
@@ -537,12 +715,56 @@ function mostrarGastosAgrupadosWeb (idElemento, agrup, periodo) {
 
     }
 
-
     let formulario = document.getElementById("formulario-filtrado");
 
     formulario.addEventListener("submit", filtrarGastosWeb);
 
 
+
+    async function cargarGastosApi() {
+
+        let nombreUsuario = document.getElementById("nombre_usuario").value;
+
+        try {
+
+        
+        if (nombreUsuario != "") {
+
+            let respuesta = await fetch (`https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${nombreUsuario}`,
+                {
+                    method: "GET"
+                }
+            );
+    
+            if (respuesta.ok) {
+                let datos = await respuesta.json();
+    
+                gestionPresupuesto.cargarGastos(datos);
+                repintar();
+            }
+            else {
+                throw new Error ("Fallo de conexión");
+            }
+        }
+        else {
+            throw new Error ("Necesita rellenar el campo vacío con su nombre y apellido sin espacio");
+        }
+    } catch (error) {
+
+        alert("Error: " + error.message);
+    }
+
+    }
+
+
+    let btnCargarGastosApi = document.getElementById("cargar-gastos-api");
+
+    btnCargarGastosApi.addEventListener("click", cargarGastosApi);
+
+
+
+
+    
 
 export {
 
