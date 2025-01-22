@@ -106,15 +106,13 @@ let agruparPorAnyo = gestionPresupuesto.agruparGastos("anyo");
 
 
 
+    gestionPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-dia", agruparPorDia, "día");
 
-for (let [clave, valor] of Object.entries(agruparPorDia)) {
-    gestionPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-dia", { [clave]: valor }, "día");
-}
 
-for (let [clave, valor] of Object.entries(agruparPorMes)) {
-    gestionPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-mes", { [clave]: valor }, "mes");
-}
+    gestionPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-mes", agruparPorMes, "mes");
 
-for (let [clave, valor] of Object.entries(agruparPorAnyo)) {
-    gestionPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-anyo", { [clave]: valor }, "año");
-}
+
+    gestionPresupuestoWeb.mostrarGastosAgrupadosWeb("agrupacion-anyo", agruparPorAnyo, "año");
+
+
+
